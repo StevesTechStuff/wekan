@@ -1,0 +1,29 @@
+version: '3'
+services:
+  wekan-db:
+    image: mongo:4.4
+    container_name: wekan-db
+    volumes:
+      - wekan-db-data:/data/db
+    networks:
+      - wekan-tier
+
+  wekan:
+    image: quay.io/wekan/wekan:v5.85
+    container_name: wekan
+    depends_on:
+      - wekan-db
+    environment:
+      - MONGO_URL=mongodb://wekan-db:27017/wekan
+      - ROOT_URL=http://localhost:8080
+    ports:
+      - "8080:8080"
+    networks:
+      - wekan-tier
+
+networks:
+  wekan-tier:
+    driver: bridge
+
+volumes:
+  wekan-db-data:
