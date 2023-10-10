@@ -41,7 +41,7 @@ networks:
       - wekan-db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.wekan.rule=Host(`wekan.localhost`)"
+      - "traefik.http.routers.wekan.rule=Host(`FQDN`)"
       - "traefik.http.routers.wekan.entrypoints=web"
     networks:
       - traefiknet
