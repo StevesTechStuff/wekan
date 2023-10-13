@@ -16,7 +16,7 @@ services:
     image: mongo:4.2
     container_name: wekan-db
     volumes:
-      - db-data:/data/db  # Named volume for database data
+      - db-data:/data/db
 
   wekan:
     image: wekanteam/wekan:latest
@@ -28,10 +28,10 @@ services:
       - wekan-db
 
 volumes:
-  config:        # Named volume for Nginx Proxy Manager config
-  data:          # Named volume for Nginx Proxy Manager data
-  letsencrypt:   # Named volume for SSL certificates
-  db-data:       # Named volume for Wekan database data
+  data:          # Nginx Proxy Manager data
+  config:        # Proxy Manager config
+  letsencrypt:   # SSL certificates
+  db-data:       # Wekan database data
 
 networks:
   default:
