@@ -1,35 +1,22 @@
 version: '3.3'
 
 services:
-  traefik:
-    image: traefik:v2.10
-    container_name: traefik
-    command:
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.myresolver.acme.email=you@example.com"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
     ports:
       - "80:80"
+      - "81:81"  # Admin UI
       - "443:443"
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./letsencrypt:/letsencrypt"
-    networks:
-      - traefiknet
-
-networks:
-  traefiknet:
-    external: false
-
+      - config:/app/config/production.json
+      - data:/data
+      - letsencrypt:/etc/letsencrypt
 
   wekan-db:
     image: mongo:4.2
     container_name: wekan-db
-    networks:
-      - traefiknet
+    volumes:
+      - db-data:/data/db  # Named volume for database data
 
   wekan:
     image: wekanteam/wekan:latest
@@ -39,9 +26,14 @@ networks:
       - ROOT_URL=http://wekan.localhost
     depends_on:
       - wekan-db
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.wekan.rule=Host(`FQDN`)"
-      - "traefik.http.routers.wekan.entrypoints=web"
-    networks:
-      - traefiknet
+
+volumes:
+  config:        # Named volume for Nginx Proxy Manager config
+  data:          # Named volume for Nginx Proxy Manager data
+  letsencrypt:   # Named volume for SSL certificates
+  db-data:       # Named volume for Wekan database data
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
