@@ -8,31 +8,40 @@ services:
       - "81:81"  # Admin UI
       - "443:443"
     volumes:
-      - config:/app/config/production.json
+      - config:/config
       - data:/data
       - letsencrypt:/etc/letsencrypt
+    networks:
+      - web-network
 
   wekan-db:
     image: mongo:4.2
     container_name: wekan-db
     volumes:
       - db-data:/data/db
+    networks:
+      - db-network
 
   wekan:
     image: wekanteam/wekan:latest
     container_name: wekan
     environment:
-      - MONGO_URL=mongodb://wekan-db:27017/wekan
-      - ROOT_URL=http://wekan.localhost
+      - MONGO_URL=mongodb://wekan-db.db-network:27017/wekan
+      - ROOT_URL=http://YOURFQDN
     depends_on:
       - wekan-db
+    networks:
+      - web-network
+      - db-network  
 
 volumes:
-  data:          # Nginx Proxy Manager data
-  config:        # Proxy Manager config
-  letsencrypt:   # SSL certificates
-  db-data:       # Wekan database data
+  data:           # Nginx Proxy Manager data
+  config:         # Proxy Manager config
+  letsencrypt:    # SSL certificates
+  db-data:        # Wekan database data
 
 networks:
-  nginx-proxy:
-    external: true
+  web-network:
+    driver: bridge
+  db-network:
+    driver: bridge
