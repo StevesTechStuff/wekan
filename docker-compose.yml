@@ -32,7 +32,9 @@ services:
       - wekan-db
     networks:
       - web-network
-      - db-network  
+      - db-network
+    ports:
+      - 8080:8080
 
 volumes:
   data:           # Nginx Proxy Manager data
