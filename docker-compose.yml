@@ -26,7 +26,7 @@ services:
     image: wekanteam/wekan:latest
     container_name: wekan
     environment:
-      - MONGO_URL=mongodb://wekan-db.db-network:27017/wekan
+      - MONGO_URL=mongodb://wekan-db:27017/wekan
       - ROOT_URL=http://YOURFQDN
     depends_on:
       - wekan-db
@@ -34,7 +34,7 @@ services:
       - web-network
       - db-network
     ports:
-      - 8080:8080
+      - 5000:8080
 
 volumes:
   data:           # Nginx Proxy Manager data
