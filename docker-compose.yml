@@ -28,6 +28,7 @@ services:
     environment:
       - MONGO_URL=mongodb://wekan-db:27017/wekan
       - ROOT_URL=http://YOURFQDN
+      # - MAIL_URL=smtp://user:pass@smtpserver.example.com:25/
     depends_on:
       - wekan-db
     networks:
