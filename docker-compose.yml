@@ -1,18 +1,19 @@
 version: '3.3'
 
 services:
-  nginx-proxy-manager:
-    image: jc21/nginx-proxy-manager:latest
+  caddy:
+    image: caddy:latest
     ports:
       - "80:80"
-      - "81:81"  # Admin UI
       - "443:443"
     volumes:
-      - config:/config
-      - data:/data
-      - letsencrypt:/etc/letsencrypt
+      - caddy_config:/config
+      - caddy_data:/data
+      - ./Caddyfile:/etc/caddy/Caddyfile
     networks:
       - web-network
+    environment:
+      - ACME_AGREE=true  # Agree to Let's Encrypt Subscriber Agreement
 
   wekan-db:
     image: mongo:4.2
@@ -27,7 +28,7 @@ services:
     container_name: wekan
     environment:
       - MONGO_URL=mongodb://wekan-db:27017/wekan
-      - ROOT_URL=http://YOURFQDN
+      - ROOT_URL=https://FQDN
       # - MAIL_URL=smtp://user:pass@smtpserver.example.com:25/
     depends_on:
       - wekan-db
@@ -38,9 +39,8 @@ services:
       - 5000:8080
 
 volumes:
-  data:           # Nginx Proxy Manager data
-  config:         # Proxy Manager config
-  letsencrypt:    # SSL certificates
+  caddy_config:   # Caddy configuration
+  caddy_data:     # Caddy data
   db-data:        # Wekan database data
 
 networks:

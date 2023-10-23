@@ -1,0 +1,7 @@
+{
+  email EMAILADDRESS
+}
+
+FQDN {
+  reverse_proxy SERVERIP:CONTAINERPORT
+}
